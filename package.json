@@ -86,8 +86,5 @@
     "vitest": "^3.2.4"
   },
   "types": "./dist/client/index.d.ts",
-  "module": "./dist/client/index.js",
-  "dependencies": {
-    "posthog-node": "^4.3.0"
-  }
+  "module": "./dist/client/index.js"
 }

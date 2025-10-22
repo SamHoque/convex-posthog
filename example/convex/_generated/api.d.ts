@@ -39,15 +39,20 @@ export declare const internal: FilterApi<
 >;
 
 export declare const components: {
-  shardedCounter: {
+  posthog: {
     lib: {
-      add: FunctionReference<
-        "mutation",
+      trackEvent: FunctionReference<
+        "action",
         "internal",
-        { count: number; name: string; shards?: number },
+        {
+          apiKey: string;
+          event: string;
+          host?: string;
+          properties?: any;
+          userId: string;
+        },
         null
       >;
-      count: FunctionReference<"query", "internal", { name: string }, number>;
     };
   };
 };

@@ -38,14 +38,15 @@ Set these environment variables in your Convex deployment:
 
 ```bash
 POSTHOG_API_KEY=your_api_key_here
-POSTHOG_HOST=https://app.posthog.com  # Optional, defaults to app.posthog.com
+POSTHOG_HOST=https://us.i.posthog.com  # Optional, defaults to US Cloud
+# For EU Cloud use: https://eu.i.posthog.com
 ```
 
 You can set these in the Convex dashboard or via the CLI:
 
 ```bash
 npx convex env set POSTHOG_API_KEY your_api_key_here
-npx convex env set POSTHOG_HOST https://app.posthog.com
+npx convex env set POSTHOG_HOST https://us.i.posthog.com  # Or https://eu.i.posthog.com for EU Cloud
 ```
 
 ## Usage
@@ -127,8 +128,10 @@ You can configure the PostHog component when instantiating it:
 
 ```ts
 const posthog = new PostHog(components.posthog, {
-  apiKey: "your_api_key",           // Defaults to process.env.POSTHOG_API_KEY
-  host: "https://app.posthog.com",  // Defaults to process.env.POSTHOG_HOST or app.posthog.com
+  apiKey: "your_api_key",                 // Defaults to process.env.POSTHOG_API_KEY
+  host: "https://us.i.posthog.com",       // Defaults to process.env.POSTHOG_HOST or US Cloud
+  // For EU Cloud use: "https://eu.i.posthog.com"
+  // For self-hosted use your domain
 });
 ```
 
@@ -144,7 +147,7 @@ new PostHog(component: PostHogComponent, options?: PostHogOptions)
 
 **Options:**
 - `apiKey` (string, optional): PostHog API key. Defaults to `POSTHOG_API_KEY` env var
-- `host` (string, optional): PostHog host URL. Defaults to `POSTHOG_HOST` env var or `https://app.posthog.com`
+- `host` (string, optional): PostHog host URL. Defaults to `POSTHOG_HOST` env var or `https://us.i.posthog.com` (US Cloud). Use `https://eu.i.posthog.com` for EU Cloud or your self-hosted domain.
 
 #### `trackUserEvent(ctx, data)`
 
@@ -172,7 +175,7 @@ await posthog.trackUserEvent(ctx, {
 ## How It Works
 
 1. When you call `trackUserEvent`, it schedules a background action using Convex's scheduler
-2. The background action runs with `"use node"` directive, allowing it to use the `posthog-node` library
+2. The background action uses the PostHog HTTP API directly (no Node.js dependencies required)
 3. Events are sent to PostHog with automatic metadata (timestamp, lib version, etc.)
 4. If tracking fails, it fails silently without affecting your app
 

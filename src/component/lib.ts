@@ -1,16 +1,11 @@
-"use node";
-
 import { v } from "convex/values";
-import { internalAction } from "./_generated/server.js";
-
-// PostHog client will be initialized per-request since we can't use global state
-// in a reliable way across different component instances
+import { action } from "./_generated/server.js";
 
 /**
- * Internal action for tracking events with PostHog
- * PostHog automatically adds: $timestamp, $lib, $lib_version, and other metadata
+ * Track events with PostHog.
+ * @see https://posthog.com/docs/api/post-only-endpoints
  */
-export const trackEvent = internalAction({
+export const trackEvent = action({
   args: {
     apiKey: v.string(),
     host: v.optional(v.string()),
@@ -20,33 +15,54 @@ export const trackEvent = internalAction({
   },
   returns: v.null(),
   handler: async (_ctx, args) => {
-    // Skip if API key not configured
     if (!args.apiKey) {
       return;
     }
 
-    try {
-      // Dynamically import PostHog in Node action
-      const { PostHog } = await import("posthog-node");
-
-      const client = new PostHog(args.apiKey, {
-        host: args.host ?? "https://app.posthog.com",
-        flushAt: 1, // Flush immediately for backend events
-        flushInterval: 0,
-      });
-
-      client.capture({
-        distinctId: args.userId,
+    if (!args.userId || !args.event) {
+      console.warn("PostHog: userId and event are required", {
+        userId: args.userId,
         event: args.event,
+      });
+      return;
+    }
+
+    try {
+      const host = args.host ?? "https://us.i.posthog.com";
+      const url = `${host}/i/v0/e/`;
+
+      const payload = {
+        api_key: args.apiKey,
+        event: args.event,
+        distinct_id: args.userId,
         properties: {
           ...args.properties,
-          source: "backend", // Mark as backend event for filtering
+          $lib: "convex-posthog",
+          $lib_version: "0.1.0",
         },
+        timestamp: new Date().toISOString(),
+      };
+
+      const response = await fetch(url, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(payload),
       });
 
-      await client.flush();
+      if (!response.ok) {
+        const responseText = await response
+          .text()
+          .catch(() => "Unable to read response");
+        console.warn(`PostHog tracking failed: ${response.status} ${response.statusText}`, {
+          responseBody: responseText,
+          event: args.event,
+          userId: args.userId,
+          url,
+        });
+      }
     } catch (error) {
-      // Silently fail - analytics should never break the app
       console.warn("PostHog tracking failed:", error);
     }
   },

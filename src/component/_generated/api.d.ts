@@ -29,13 +29,18 @@ declare const fullApi: ApiFromModules<{
 }>;
 export type Mounts = {
   lib: {
-    add: FunctionReference<
-      "mutation",
+    trackEvent: FunctionReference<
+      "action",
       "public",
-      { count: number; name: string; shards?: number },
+      {
+        apiKey: string;
+        event: string;
+        host?: string;
+        properties?: any;
+        userId: string;
+      },
       null
     >;
-    count: FunctionReference<"query", "public", { name: string }, number>;
   };
 };
 // For now fullApiWithMounts is only fullApi which provides
