@@ -3,7 +3,7 @@
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 import { convexTest } from "convex-test";
 import schema from "./schema.js";
-import { internal } from "./_generated/api.js";
+import { api } from "./_generated/api.js";
 import { modules } from "./setup.test.js";
 
 describe("PostHog component lib", () => {
@@ -21,7 +21,7 @@ describe("PostHog component lib", () => {
     // Note: In a real test environment, you'd mock the PostHog client
     // For now, we just verify the function signature is correct
     await expect(
-      t.action(internal.lib.trackEvent, {
+      t.action(api.lib.trackEvent, {
         apiKey: "test-key",
         host: "https://app.posthog.com",
         userId: "user_123",
@@ -36,7 +36,7 @@ describe("PostHog component lib", () => {
 
     // Should not throw when apiKey is empty
     await expect(
-      t.action(internal.lib.trackEvent, {
+      t.action(api.lib.trackEvent, {
         apiKey: "",
         userId: "user_123",
         event: "test_event",
@@ -49,7 +49,7 @@ describe("PostHog component lib", () => {
 
     // Test without properties
     await expect(
-      t.action(internal.lib.trackEvent, {
+      t.action(api.lib.trackEvent, {
         apiKey: "test-key",
         userId: "user_123",
         event: "test_event",

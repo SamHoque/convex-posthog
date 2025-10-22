@@ -38,7 +38,7 @@ export const trackEvent = action({
         properties: {
           ...args.properties,
           $lib: "convex-posthog",
-          $lib_version: "0.1.0",
+          $lib_version: "0.1.1",
         },
         timestamp: new Date().toISOString(),
       };
