@@ -49,7 +49,16 @@
       "default": "./dist/client/index.js"
     },
     "./test": "./src/test.ts",
+    "./_generated/component.js": {
+      "types": "./dist/component/_generated/component.d.ts",
+      "default": "./dist/component/_generated/component.js"
+    },
     "./convex.config": {
+      "@convex-dev/component-source": "./src/component/convex.config.ts",
+      "types": "./dist/component/convex.config.d.ts",
+      "default": "./dist/component/convex.config.js"
+    },
+    "./convex.config.js": {
       "@convex-dev/component-source": "./src/component/convex.config.ts",
       "types": "./dist/component/convex.config.d.ts",
       "default": "./dist/component/convex.config.js"
