@@ -14,6 +14,8 @@ export type PostHogComponent = {
         userId: string;
         event: string;
         properties?: Record<string, unknown>;
+        setProperties?: Record<string, unknown>;
+        setOnceProperties?: Record<string, unknown>;
       },
       null
     >;
@@ -38,7 +40,9 @@ export type PostHogOptions = {
  * await posthog.trackUserEvent(ctx, {
  *   userId: "user_123",
  *   event: "user_created",
- *   properties: { email: "user@example.com" }
+ *   properties: { email: "user@example.com" },
+ *   setProperties: { name: "John Doe" },
+ *   setOnceProperties: { first_login: Date.now() }
  * });
  * ```
  */
@@ -61,6 +65,8 @@ export class PostHog {
       userId: string;
       event: string;
       properties?: Record<string, unknown>;
+      setProperties?: Record<string, unknown>;
+      setOnceProperties?: Record<string, unknown>;
     }
   ): Promise<void> {
     if (!this.apiKey) {
@@ -74,6 +80,8 @@ export class PostHog {
       userId: data.userId,
       event: data.event,
       properties: data.properties,
+      setProperties: data.setProperties,
+      setOnceProperties: data.setOnceProperties,
     });
   }
 }

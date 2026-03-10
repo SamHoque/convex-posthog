@@ -12,6 +12,8 @@ export const trackEvent = action({
     userId: v.string(),
     event: v.string(),
     properties: v.optional(v.any()),
+    setProperties: v.optional(v.any()),
+    setOnceProperties: v.optional(v.any()),
   },
   returns: v.null(),
   handler: async (_ctx, args) => {
@@ -37,6 +39,8 @@ export const trackEvent = action({
         distinct_id: args.userId,
         properties: {
           ...args.properties,
+          ...(args.setProperties && { $set: args.setProperties }),
+          ...(args.setOnceProperties && { $set_once: args.setOnceProperties }),
           $lib: "convex-posthog",
           $lib_version: "0.1.1",
         },
